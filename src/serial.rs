@@ -2,6 +2,7 @@
 //!
 //! This module support both polling and interrupt based accesses to the serial peripherals.
 
+use core::cell::UnsafeCell;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::DerefMut;
@@ -29,7 +30,7 @@ use crate::time::{Bps, U32Ext};
     // feature = "stm32l471", // missing PAC support
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
+    // feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
@@ -520,7 +521,7 @@ macro_rules! hal {
                         // NOTE(unsafe) atomic write to stateless register
                         // NOTE(write_volatile) 8-bit write that's not possible through the svd2rust API
                         unsafe {
-                            ptr::write_volatile(&(*pac::$USARTX::ptr()).tdr as *const _ as *mut _, byte)
+                            ptr::write_volatile(UnsafeCell::raw_get(&(*pac::$USARTX::ptr()).tdr as *const _ as *mut _), byte)
                         }
                         Ok(())
                     } else {
@@ -863,7 +864,7 @@ hal! {
     // feature = "stm32l471", // missing PAC support
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
+    // feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
@@ -884,7 +885,7 @@ hal! {
     // feature = "stm32l471", // missing PAC support
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
+    // feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
@@ -1071,7 +1072,7 @@ impl_pin_traits! {
     // feature = "stm32l471",
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
+    // feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
@@ -1099,7 +1100,7 @@ impl_pin_traits! {
     // feature = "stm32l471", ,, missing PAC support
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
+    // feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",

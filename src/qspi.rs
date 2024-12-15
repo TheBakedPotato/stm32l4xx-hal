@@ -1,5 +1,6 @@
 //! Quad Serial Peripheral Interface (QSPI) bus
 
+use core::cell::UnsafeCell;
 use crate::gpio::{
     gpioa::{PA6, PA7},
     gpiob::{PB0, PB1, PB10, PB11},
@@ -676,7 +677,7 @@ impl<CLK, NCS, IO0, IO1, IO2, IO3> Qspi<(CLK, NCS, IO0, IO1, IO2, IO3)> {
             for byte in data {
                 while self.qspi.sr.read().ftf().bit_is_clear() {}
                 unsafe {
-                    ptr::write_volatile(&self.qspi.dr as *const _ as *mut u8, *byte);
+                    ptr::write_volatile(UnsafeCell::raw_get(&self.qspi.dr as *const _ as *mut _), *byte);
                 }
             }
         }

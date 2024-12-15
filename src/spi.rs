@@ -5,6 +5,7 @@
 //! don't have it (L432xx and L442xx don't, L452xx does). Users of this MCU variant that
 //! don't have it shouldn't attempt to use it. Relevant info is on user-manual level.
 
+use core::cell::UnsafeCell;
 use core::ptr;
 use core::sync::atomic;
 use core::sync::atomic::Ordering;
@@ -268,7 +269,7 @@ macro_rules! hal {
                         nb::Error::Other(Error::Crc)
                     } else if sr.txe().bit_is_set() {
                         // NOTE(write_volatile) see note above
-                        unsafe { ptr::write_volatile(&self.spi.dr as *const _ as *mut u8, byte) }
+                        unsafe { ptr::write_volatile(UnsafeCell::raw_get(&self.spi.dr as *const _ as *mut _), byte) }
                         return Ok(());
                     } else {
                         nb::Error::WouldBlock
@@ -288,7 +289,6 @@ use crate::gpio::gpiod::*;
     // feature = "stm32l471",  // missing PAC support for Port G
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
@@ -318,7 +318,6 @@ pins!(SPI1, 5,
     // feature = "stm32l471", // missing PAC support for Port G
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
@@ -351,7 +350,6 @@ pins!(SPI3, 6,
     // feature = "stm32l471", // missing PAC support for Port G
     feature = "stm32l475",
     feature = "stm32l476",
-    feature = "stm32l485",
     feature = "stm32l486",
     feature = "stm32l496",
     feature = "stm32l4a6",
